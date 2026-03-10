@@ -70,7 +70,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	// ImGuiManagerインスタンスの取得
 	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
 
-
+#pragma region シーンの初期化
 	// 最初のシーンの初期化
 	scene = Scene::kTitle;
 	title = new Title;
@@ -89,6 +89,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 	// ゲームクリアシーンの初期化
 	gameClear->Initialize();
+#pragma endregion
 
 #pragma region 音声のロード
 	/*
