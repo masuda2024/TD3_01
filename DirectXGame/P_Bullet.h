@@ -1,0 +1,46 @@
+#pragma once
+#include"KamataEngine.h"
+class P_Bullet
+{
+public:
+	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
+	void Update();
+	void Draw(const KamataEngine::Camera& camera);
+
+	KamataEngine::Model* model_P_Bullet_ = nullptr;
+	
+
+	//速度
+	KamataEngine::Vector3 PB_velocity_;
+
+#pragma region 衝突判定 [ プレイヤーの弾  <<===>>  敵 ]
+	
+	// 当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
+	// ワールド座標を取得
+	KamataEngine::Vector3 GetWorldPosition();
+
+	void OnCollision();
+
+
+#pragma endregion
+	
+
+	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
+
+private:
+	// ワールド変換データ
+	KamataEngine::WorldTransform worldTransform_;
+	// モデル
+	KamataEngine::Model* model_ = nullptr;
+
+	// カメラ
+	KamataEngine::Camera* camera_;
+
+	KamataEngine::Vector3 velocity_ = {};
+
+	// テクスチャハンドル
+	uint32_t textureHandle_ = 0;
+};

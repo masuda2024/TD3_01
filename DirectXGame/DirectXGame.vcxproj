@@ -163,13 +163,20 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="Clear.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="E_Bullet.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Over.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="P_Bullet.cpp" />
     <ClCompile Include="Title.cpp" />
     <ClCompile Include="Tutorial.cpp" />
+    <ClCompile Include="ViewProjection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">
@@ -269,12 +276,19 @@
     <None Include="Resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CameraController.h" />
     <ClInclude Include="Clear.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="E_Bullet.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="Over.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="P_Bullet.h" />
     <ClInclude Include="Title.h" />
     <ClInclude Include="Tutorial.h" />
+    <ClInclude Include="ViewProjection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

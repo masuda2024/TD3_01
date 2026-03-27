@@ -1,5 +1,7 @@
 #include <Windows.h>
 #include"KamataEngine.h"
+#include "ViewProjection.h"
+
 
 #include"Title.h"
 #include"Tutorial.h"
@@ -9,6 +11,17 @@
 
 
 using namespace KamataEngine;
+
+
+
+
+ViewProjection viewProjection;
+
+
+
+
+
+
 
 
 
@@ -104,7 +117,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 #pragma endregion
 
 
-
+	
+viewProjection.Initialize();
 
 
 	//メインループ
@@ -188,6 +202,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 void UpdateScene() 
 {
+	viewProjection.UpdateMatrix();
 	switch (scene) 
 	{
 	case Scene::kTitle:

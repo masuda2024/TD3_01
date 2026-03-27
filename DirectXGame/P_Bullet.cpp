@@ -1,0 +1,64 @@
+#include "P_Bullet.h"
+using namespace KamataEngine;
+#include "MyMath.h"
+
+
+
+
+void P_Bullet::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity) 
+{ 
+	assert(model);
+
+	model_ = model;
+
+	model_P_Bullet_ = model;
+
+	PB_velocity_ = velocity;
+	
+	model_P_Bullet_ = KamataEngine::Model::CreateFromOBJ("Z_bullet");
+
+	worldTransform_.Initialize();
+	worldTransform_.translation_ = position;
+
+	
+}
+void P_Bullet::Update()
+{
+	//弾の速度(X軸方向)
+	PB_velocity_.x = 1.0f;
+
+	//座標を移動させる (1フレーム分の移動量を足し込む)
+	worldTransform_.translation_.x += PB_velocity_.x;
+	
+
+
+	// アフィン変換行列
+	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	// 行列を定数バッファに転送
+	worldTransform_.TransferMatrix();
+}
+void P_Bullet::Draw(const KamataEngine::Camera& camera) 
+{ 
+	model_P_Bullet_->Draw(worldTransform_, camera);
+}
+
+#pragma region 衝突判定 [ プレイヤーの弾  <<===>>  敵 ]
+
+KamataEngine::Vector3 P_Bullet::GetWorldPosition()
+{
+	// ワールド座標を入れる変数
+	KamataEngine::Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+void P_Bullet::OnCollision() 
+{ 
+	
+}
+
+#pragma endregion

@@ -1,0 +1,57 @@
+#pragma once
+#include "KamataEngine.h"
+#include "MyMath.h"
+
+class Player;
+class E_Bullet
+{
+public:
+	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
+	void Update();
+	void Draw(const KamataEngine::Camera& camera);
+
+	KamataEngine::Model* model_E_Bullet_ = nullptr;
+
+	// 速度
+	KamataEngine::Vector3 EB_velocity_;
+
+	
+	
+	/*
+	bool Is_EB_Dead() const { return is_EB_Dead_; }
+	// デスフラグ
+	bool is_EB_Dead_ = false;
+*/
+	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
+
+#pragma region 衝突判定 [ プレイヤー  <<===>>  敵の弾 ]
+
+	// 当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
+	// ワールド座標を取得
+	KamataEngine::Vector3 GetWorldPosition();
+
+	
+	
+	void OnCollision();
+
+
+#pragma endregion
+	
+
+private:
+	// ワールド変換データ
+	KamataEngine::WorldTransform worldTransform_;
+	// モデル
+	KamataEngine::Model* model_ = nullptr;
+
+	// カメラ
+	KamataEngine::Camera* camera_;
+
+	KamataEngine::Vector3 velocity_ = {};
+
+	// テクスチャハンドル
+	uint32_t textureHandle_ = 0;
+};
