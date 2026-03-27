@@ -16,12 +16,6 @@ public:
 	KamataEngine::Vector3 EB_velocity_;
 
 	
-	
-	/*
-	bool Is_EB_Dead() const { return is_EB_Dead_; }
-	// デスフラグ
-	bool is_EB_Dead_ = false;
-*/
 	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 

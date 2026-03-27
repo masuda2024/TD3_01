@@ -106,6 +106,7 @@ private:
 #pragma region プレイヤー
 	Player* player_ = nullptr;
 	KamataEngine::Model* modelPlayer_ = nullptr;
+	
 #pragma endregion
 
 

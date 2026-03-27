@@ -24,6 +24,7 @@ void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& pos
 
 	model_ = model;
 
+	
 	// textureHandle_ = textureHandle;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
@@ -32,10 +33,22 @@ void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& pos
 	camera_ = camera;
 
 
+
+	//カーソル
+	modelCursor_ = Model::CreateFromOBJ("Cursor", true);
+	
+	//3Dレティクルのワールド変換を初期化
+	worldTransform3DReticle_.Initialize();
+	worldTransform3DReticle_.translation_ = position;
+	worldTransform3DReticle_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
+
+
+
+
 	//シングルトンインスタンスを取得する
 	input_ = KamataEngine::Input::GetInstance();
-	//3Dレティクルのワールド変換を初期化
-	worldTransformReticle_.Initialize();
+	
+	
 }
 
 void Player::Update()
@@ -91,21 +104,28 @@ void Player::Update()
 		p_bullet->Update();
 	}
 
+	
 #pragma endregion
 
 
 #pragma region 3Dレティクル
 
+	
+
 	//プレイヤーから3Dレティクルへの距離
 	const float kDistanceP_To_3DR = 50.0f;
 	//プレイヤーから3Dレティクルへのオフセット(X+1向き)
-	Vector3 offset = {1.0f, 0, 0};
+	Vector3 offset = {0, 0, 1.0f};
 	//プレイヤーのワールド変換の回転を反映
-	offset =
+	offset = TransformNormal(offset, worldTransform_.matWorld_);
 	//ベクトルの長さを整える
 	offset = Normalize(offset) * kDistanceP_To_3DR;
-	// 3Dレティクルへ
+	// 位置
+	worldTransform3DReticle_.translation_ = worldTransform_.translation_ + offset;
 
+	// 行列更新
+	worldTransform3DReticle_.matWorld_ = MakeAffineMatrix(worldTransform3DReticle_.scale_, worldTransform3DReticle_.rotation_, worldTransform3DReticle_.translation_);
+	worldTransform3DReticle_.TransferMatrix();
 
 #pragma endregion
 
@@ -116,12 +136,19 @@ void Player::Update()
 	//座標移動(ベクトルの加算)
 	worldTransform_.translation_ += move;
 
-
-
+	worldTransform3DReticle_.translation_ += move;
+	
+	
+	
 	// アフィン変換行列
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
+
+
+	
+
+
 }
 
 void Player::Draw() 
@@ -133,12 +160,15 @@ void Player::Draw()
 
 
 	model_->Draw(worldTransform_, *camera_); 
+	
 
 	
 	for (P_Bullet* p_bullet : p_bullets_)
 	{
 		p_bullet->Draw(*camera_);
 	}
+	
+	modelCursor_->Draw(worldTransform3DReticle_,*camera_);
 }
 
 Player::~Player()
@@ -148,9 +178,13 @@ Player::~Player()
 	{
 		delete p_bullet;
 	}
+	
+	delete modelCursor_;
 }
 
-void Player::Rotate() 
+#pragma region プレイヤーの動き
+
+void Player::RotateX() 
 {
 	//回転速さ[ラジアン/frame]
 	const float kRotSpeed = 0.007f;
@@ -164,8 +198,27 @@ void Player::Rotate()
 	}
 }
 
+void Player::RotateZ()
+{
+	// 回転速さ[ラジアン/frame]
+	const float kRotSpeed2 = 0.01f;
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_W))
+	{
+		worldTransform_.rotation_.z -= kRotSpeed2;
+	} else if (input_->PushKey(DIK_S)) 
+	{
+		worldTransform_.rotation_.z += kRotSpeed2;
+	}
+}
+
 void Player::Attack() 
 {
+
+
+	
+
+
 	if (input_->TriggerKey(DIK_SPACE))
 	{
 		//弾の速度
@@ -180,8 +233,13 @@ void Player::Attack()
 		//弾を登録する
 		p_bullets_.push_back(new_p_Bullet);
 
+		velocity_ = worldTransform3DReticle_.translation_ - worldTransform_.translation_;
+		velocity_ = Normalize(velocity_) * kBulletSpeed;
+
 	}
 }
+
+#pragma endregion 
 
 #pragma region 衝突判定 [ プレイヤー  <<===>>  敵の弾 ]
 

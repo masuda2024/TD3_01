@@ -55,10 +55,9 @@ KamataEngine::Vector3 E_Bullet::GetWorldPosition()
 	return worldPos;
 }
 
-
-#pragma endregion
-
 void E_Bullet::OnCollision()
 {
-	//is_EB_Dead_ = true; 
+	
 }
+
+#pragma endregion

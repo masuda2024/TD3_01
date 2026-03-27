@@ -13,7 +13,6 @@
 
 #include"P_Bullet.h"
 
-
 using namespace KamataEngine;
 using namespace MathUtility;
 
@@ -29,7 +28,8 @@ public:
 	//弾
 	std::list<P_Bullet*> p_bullets_;
 
-
+	// カーソル
+	KamataEngine::Model* modelCursor_ = nullptr;
 
 #pragma region 基本構成
 	// 初期化
@@ -44,7 +44,10 @@ public:
 	~Player();
 #pragma endregion
 
-	void Rotate();
+	void RotateX();
+	void RotateZ();
+
+
 	void Attack();
 #pragma region プレイヤーの状態
 	
@@ -88,9 +91,7 @@ public:
 
 	const KamataEngine::Vector3& GetRotation() const { return worldTransform_.rotation_; }
 
-	//3Dレティクル用ワールド変換
-	WorldTransform worldTransformReticle_;
-
+	
 #pragma endregion
 
 private:
@@ -98,7 +99,9 @@ private:
 	KamataEngine::WorldTransform worldTransform_;
 	//モデル
 	KamataEngine::Model* model_ = nullptr;
-	
+	// 3Dレティクル用ワールド変換
+	WorldTransform worldTransform3DReticle_;
+
 	// カメラ
 	KamataEngine::Camera* camera_;
 	

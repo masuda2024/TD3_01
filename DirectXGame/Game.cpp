@@ -28,7 +28,11 @@ void Game::Initialize()
 #pragma region プレイヤー
 
 
-	modelPlayer_ = Model::CreateFromOBJ("player", true);
+	modelPlayer_ = Model::CreateFromOBJ("H_ziki", true);
+
+	
+	
+	
 	//プレイヤーの生成
 	player_ = new Player();
 	//プレイヤーの初期化
@@ -36,6 +40,11 @@ void Game::Initialize()
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 	
 #pragma endregion
+
+
+
+
+
 
 #pragma region 敵
 	modelEnemy_ = Model::CreateFromOBJ("kaizyu1", true);
@@ -153,7 +162,8 @@ void Game::Update()
 
 #pragma region プレイヤー
 	player_->Update();
-	player_->Rotate();
+	player_->RotateX();
+	player_->RotateZ();
 #pragma endregion
 
 
