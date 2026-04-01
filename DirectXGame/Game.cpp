@@ -25,6 +25,15 @@ void Game::Initialize()
 	worldTransform_.Initialize();
 
 
+#pragma region 天球
+
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	modelEarth_ = KamataEngine::Model::CreateFromOBJ("earth", true);
+	modelMoon_ = KamataEngine::Model::CreateFromOBJ("moon", true);
+
+#pragma endregion
+
+
 #pragma region プレイヤー
 
 
@@ -264,17 +273,31 @@ void Game::Draw()
 	//スプライト
 	Sprite::PreDraw();
 
+
+#pragma region UI
 	_playerHPSprite_->Draw();
 	_enemyHPSprite_->Draw();
 
 	playerHPSprite_->Draw();
 	enemyHPSprite_->Draw();
+#pragma endregion
+
+
 
 	Sprite::PostDraw();
 
 
 	//モデル
 	Model::PreDraw();
+
+
+#pragma region 天球
+	
+	modelSkydome_->Draw(worldTransform_, camera_);
+	modelEarth_->Draw(worldTransform_, camera_);
+	modelMoon_->Draw(worldTransform_, camera_);
+
+#pragma endregion
 
 #pragma region プレイヤー
 	player_->Draw();
@@ -307,6 +330,14 @@ Game::~Game()
 	delete _enemyHPSprite_;
 
 #pragma endregion
+
+
+
+	delete modelSkydome_;
+	delete modelEarth_; 
+	delete modelMoon_;
+
+
 
 	//プレイヤーの解放
 	delete player_;

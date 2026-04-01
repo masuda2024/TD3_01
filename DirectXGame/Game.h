@@ -99,8 +99,15 @@ private:
 
 #pragma endregion
 
+#pragma region 天球
 
-
+	KamataEngine::Model* modelSkydome_ = nullptr;
+	KamataEngine::Model* modelEarth_ = nullptr;
+	KamataEngine::Model* modelMoon_ = nullptr;
+	
+	KamataEngine::WorldTransform worldTransformEarth_;
+	KamataEngine::WorldTransform worldTransformMoon_;
+#pragma endregion
 
 
 #pragma region プレイヤー

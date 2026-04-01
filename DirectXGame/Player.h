@@ -113,4 +113,11 @@ private:
 
 	int32_t maxHP_ = 10000;
 	int32_t hp_ = maxHP_;
+
+
+	// マウスの切り替え
+	uint32_t OFF_Mouse = true;
+	uint32_t ON_Mouse = false;
+
+
 };
