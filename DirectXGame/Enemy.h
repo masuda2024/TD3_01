@@ -9,11 +9,12 @@
 #define NOMINMAX
 #include "math.h"
 #include <cmath>
+#include "MyMath.h"
 
 
 #include"E_Bullet.h"
 
-
+class P_Bullet;
 class Enemy
 {
 public:
@@ -64,9 +65,14 @@ public:
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
 
-	void OnCollisionE();
-	std::list<E_Bullet*>& GetE_Bullets() { return e_bullets_; }
+	//void OnCollisionE();
+	const std::list<E_Bullet*>& GetE_Bullets() const { return e_bullets_; }
 
+
+	// AABBを取得
+	AABB GetAABB();
+	// 衝突応答
+	void OnCollition(const P_Bullet* playerBullet);
 #pragma endregion
 
 

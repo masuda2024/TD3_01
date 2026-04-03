@@ -55,9 +55,25 @@ KamataEngine::Vector3 E_Bullet::GetWorldPosition()
 	return worldPos;
 }
 
-void E_Bullet::OnCollision()
+
+
+
+
+AABB2 E_Bullet::GetAABB2() 
 {
-	
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB2 aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
 }
 
+// プレイヤーと敵の弾の衝突
+void E_Bullet::OnCollition2(const Player* player)
+{
+	(void)player; 
+}
 #pragma endregion

@@ -28,12 +28,21 @@ public:
 	KamataEngine::Vector3 GetWorldPosition();
 
 	
+	// AABBを取得
+	AABB2 GetAABB2();
+	// 衝突応答
+	void OnCollition2(const Player* player);
+
 	
-	void OnCollision();
 
 
 #pragma endregion
 	
+
+
+	
+
+
 
 private:
 	// ワールド変換データ

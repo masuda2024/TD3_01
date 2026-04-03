@@ -18,6 +18,7 @@ using namespace MathUtility;
 
 
 class E_Bullet;
+class Recovery;
 class Player 
 {
 public:
@@ -72,10 +73,30 @@ public:
 	static inline const float kHeight = 0.8f;
 
 
-	void OnCollisionP();
+	
 	const std::list<P_Bullet*>& GetBullets() const { return p_bullets_; }
 
+	AABB2 GetAABB2();
+	void OnCollition2(const E_Bullet* enemybullet);
 #pragma endregion
+
+
+
+
+#pragma region 衝突判定 [ プレイヤー  <<===>>  回復アイテム ]
+
+AABB3 GetAABB3();
+void OnCollition3(const Recovery* recovery);
+
+#pragma endregion
+
+
+
+
+
+
+
+
 
 
 

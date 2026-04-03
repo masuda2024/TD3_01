@@ -39,7 +39,7 @@ Matrix4x4 Multiply2(const Matrix4x4& m1, const Matrix4x4& m2)
 	return result;
 }
 
-
+/*
 Matrix4x4 Inverse2(const Matrix4x4& m)
 {
 	Matrix4x4 result{};
@@ -131,8 +131,88 @@ Matrix4x4 Inverse2(const Matrix4x4& m)
 	};
 
 	return result;
+}*/
+
+Matrix4x4 Inverse2(const Matrix4x4& m)
+{
+	Matrix4x4 result = {};
+	float determinant =
+	    m.m[0][0] * m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[0][0] * m.m[1][2] * m.m[2][3] * m.m[3][1] + m.m[0][0] * m.m[1][3] * m.m[2][1] * m.m[3][2] - m.m[0][0] * m.m[1][3] * m.m[2][2] * m.m[3][1] -
+	    m.m[0][0] * m.m[1][2] * m.m[2][1] * m.m[3][3] - m.m[0][0] * m.m[1][1] * m.m[2][3] * m.m[3][2] - m.m[0][1] * m.m[1][0] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[1][0] * m.m[2][3] * m.m[3][1] -
+	    m.m[0][3] * m.m[1][0] * m.m[2][1] * m.m[3][2] + m.m[0][3] * m.m[1][0] * m.m[2][2] * m.m[3][1] + m.m[0][2] * m.m[1][0] * m.m[2][1] * m.m[3][3] + m.m[0][1] * m.m[1][0] * m.m[2][3] * m.m[3][2] +
+	    m.m[0][1] * m.m[1][2] * m.m[2][0] * m.m[3][3] + m.m[0][2] * m.m[1][3] * m.m[2][0] * m.m[3][1] + m.m[0][3] * m.m[1][1] * m.m[2][0] * m.m[3][2] - m.m[0][3] * m.m[1][2] * m.m[2][0] * m.m[3][1] -
+	    m.m[0][2] * m.m[1][1] * m.m[2][0] * m.m[3][3] - m.m[0][1] * m.m[1][3] * m.m[2][0] * m.m[3][2] - m.m[0][1] * m.m[1][2] * m.m[2][3] * m.m[3][0] - m.m[0][2] * m.m[1][3] * m.m[2][1] * m.m[3][0] -
+	    m.m[0][3] * m.m[1][1] * m.m[2][2] * m.m[3][0] + m.m[0][3] * m.m[1][2] * m.m[2][1] * m.m[3][0] + m.m[0][2] * m.m[1][1] * m.m[2][3] * m.m[3][0] + m.m[0][1] * m.m[1][3] * m.m[2][2] * m.m[3][0];
+
+	if (determinant == 0.0f)
+	{
+		return result;
+	}
+
+	float InDit = 1.0f / determinant;
+
+	result.m[0][0] = InDit * (m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[1][2] * m.m[2][3] * m.m[3][1] + m.m[1][3] * m.m[2][1] * m.m[3][2] - m.m[1][3] * m.m[2][2] * m.m[3][1] -
+	                          m.m[1][2] * m.m[2][1] * m.m[3][3] - m.m[1][1] * m.m[2][3] * m.m[3][2]);
+	result.m[0][1] = InDit * (-m.m[0][1] * m.m[2][2] * m.m[3][3] - m.m[0][2] * m.m[2][3] * m.m[3][1] - m.m[0][3] * m.m[2][1] * m.m[3][2] + m.m[0][3] * m.m[2][2] * m.m[3][1] +
+	                          m.m[0][2] * m.m[2][1] * m.m[3][3] + m.m[0][1] * m.m[2][3] * m.m[3][2]);
+	result.m[0][2] = InDit * (m.m[0][1] * m.m[1][2] * m.m[3][3] + m.m[0][2] * m.m[1][3] * m.m[3][1] + m.m[0][3] * m.m[1][1] * m.m[3][2] - m.m[0][3] * m.m[1][2] * m.m[3][1] -
+	                          m.m[0][2] * m.m[1][1] * m.m[3][3] - m.m[0][1] * m.m[1][3] * m.m[3][2]);
+	result.m[0][3] = InDit * (-m.m[0][1] * m.m[1][2] * m.m[2][3] - m.m[0][2] * m.m[1][3] * m.m[2][1] - m.m[0][3] * m.m[1][1] * m.m[2][2] + m.m[0][3] * m.m[1][2] * m.m[2][1] +
+	                          m.m[0][2] * m.m[1][1] * m.m[2][3] + m.m[0][1] * m.m[1][3] * m.m[2][2]);
+	result.m[1][0] = InDit * (-m.m[1][0] * m.m[2][2] * m.m[3][3] - m.m[1][2] * m.m[2][3] * m.m[3][0] - m.m[1][3] * m.m[2][0] * m.m[3][2] + m.m[1][3] * m.m[2][2] * m.m[3][0] +
+	                          m.m[1][2] * m.m[2][0] * m.m[3][3] + m.m[1][0] * m.m[2][3] * m.m[3][2]);
+	result.m[1][1] = InDit * (m.m[0][0] * m.m[2][2] * m.m[3][3] + m.m[0][2] * m.m[2][3] * m.m[3][0] + m.m[0][3] * m.m[2][0] * m.m[3][2] - m.m[0][3] * m.m[2][2] * m.m[3][0] -
+	                          m.m[0][2] * m.m[2][0] * m.m[3][3] - m.m[0][0] * m.m[2][3] * m.m[3][2]);
+	result.m[1][2] = InDit * (-m.m[0][0] * m.m[1][2] * m.m[3][3] - m.m[0][2] * m.m[1][3] * m.m[3][0] - m.m[0][3] * m.m[1][0] * m.m[3][2] + m.m[0][3] * m.m[1][2] * m.m[3][0] +
+	                          m.m[0][2] * m.m[1][0] * m.m[3][3] + m.m[0][0] * m.m[1][3] * m.m[3][2]);
+	result.m[1][3] = InDit * (m.m[0][0] * m.m[1][2] * m.m[2][3] + m.m[0][2] * m.m[1][3] * m.m[2][0] + m.m[0][3] * m.m[1][0] * m.m[2][2] - m.m[0][3] * m.m[1][2] * m.m[2][0] -
+	                          m.m[0][2] * m.m[1][0] * m.m[2][3] - m.m[0][0] * m.m[1][3] * m.m[2][2]);
+	result.m[2][0] = InDit * (m.m[1][0] * m.m[2][1] * m.m[3][3] + m.m[1][1] * m.m[2][3] * m.m[3][0] + m.m[1][3] * m.m[2][0] * m.m[3][1] - m.m[1][3] * m.m[2][1] * m.m[3][0] -
+	                          m.m[1][1] * m.m[2][0] * m.m[3][3] - m.m[1][0] * m.m[2][3] * m.m[3][1]);
+	result.m[2][1] = InDit * (-m.m[0][0] * m.m[2][1] * m.m[3][3] - m.m[0][1] * m.m[2][3] * m.m[3][0] - m.m[0][3] * m.m[2][0] * m.m[3][1] + m.m[0][3] * m.m[2][1] * m.m[3][0] +
+	                          m.m[0][1] * m.m[2][0] * m.m[3][3] + m.m[0][0] * m.m[2][3] * m.m[3][1]);
+	result.m[2][2] = InDit * (m.m[0][0] * m.m[1][1] * m.m[3][3] + m.m[0][1] * m.m[1][3] * m.m[3][0] + m.m[0][3] * m.m[1][0] * m.m[3][1] - m.m[0][3] * m.m[1][1] * m.m[3][0] -
+	                          m.m[0][1] * m.m[1][0] * m.m[3][3] - m.m[0][0] * m.m[1][3] * m.m[3][1]);
+	result.m[2][3] = InDit * (-m.m[0][0] * m.m[1][1] * m.m[2][3] - m.m[0][1] * m.m[1][3] * m.m[2][0] - m.m[0][3] * m.m[1][0] * m.m[2][1] + m.m[0][3] * m.m[1][1] * m.m[2][0] +
+	                          m.m[0][1] * m.m[1][0] * m.m[2][3] + m.m[0][0] * m.m[1][3] * m.m[2][1]);
+	result.m[3][0] = InDit * (-m.m[1][0] * m.m[2][1] * m.m[3][2] - m.m[1][1] * m.m[2][2] * m.m[3][0] - m.m[1][2] * m.m[2][0] * m.m[3][1] + m.m[1][2] * m.m[2][1] * m.m[3][0] +
+	                          m.m[1][1] * m.m[2][0] * m.m[3][2] + m.m[1][0] * m.m[2][2] * m.m[3][1]);
+	result.m[3][1] = InDit * (m.m[0][0] * m.m[2][1] * m.m[3][2] + m.m[0][1] * m.m[2][2] * m.m[3][0] + m.m[0][2] * m.m[2][0] * m.m[3][1] - m.m[0][2] * m.m[2][1] * m.m[3][0] -
+	                          m.m[0][1] * m.m[2][0] * m.m[3][2] - m.m[0][0] * m.m[2][2] * m.m[3][1]);
+	result.m[3][2] = InDit * (-m.m[0][0] * m.m[1][1] * m.m[3][2] - m.m[0][1] * m.m[1][2] * m.m[3][0] - m.m[0][2] * m.m[1][0] * m.m[3][1] + m.m[0][2] * m.m[1][1] * m.m[3][0] +
+	                          m.m[0][1] * m.m[1][0] * m.m[3][2] + m.m[0][0] * m.m[1][2] * m.m[3][1]);
+	result.m[3][3] = InDit * (m.m[0][0] * m.m[1][1] * m.m[2][2] + m.m[0][1] * m.m[1][2] * m.m[2][0] + m.m[0][2] * m.m[1][0] * m.m[2][1] - m.m[0][2] * m.m[1][1] * m.m[2][0] -
+	                          m.m[0][1] * m.m[1][0] * m.m[2][2] - m.m[0][0] * m.m[1][2] * m.m[2][1]);
+	return result;
 }
 
+
+
+Matrix4x4 MakeRotateMatrix(const Vector3& rotation)
+{
+	float cosX = cosf(rotation.x);
+	float sinX = sinf(rotation.x);
+
+	float cosY = cosf(rotation.y);
+	float sinY = sinf(rotation.y);
+
+	float cosZ = cosf(rotation.z);
+	float sinZ = sinf(rotation.z);
+
+	// X回転
+	Matrix4x4 rotX = {1, 0, 0, 0, 0, cosX, sinX, 0, 0, -sinX, cosX, 0, 0, 0, 0, 1};
+
+	// Y回転
+	Matrix4x4 rotY = {cosY, 0, -sinY, 0, 0, 1, 0, 0, sinY, 0, cosY, 0, 0, 0, 0, 1};
+
+	// Z回転
+	Matrix4x4 rotZ = {cosZ, sinZ, 0, 0, -sinZ, cosZ, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+	// Z → X → Y の順で合成
+	Matrix4x4 result = Multiply2(Multiply2(rotZ, rotX), rotY);
+
+	return result;
+}
 
 
 void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position)
@@ -197,8 +277,9 @@ void Player::Update()
 	}
 
 	//移動限界座標
-	const float kMoveLimitX = 60.0f;
-	const float kMoveLimitY = 30.0f;
+	const float kMoveLimitX = 30.0f;
+	const float kMoveLimitY = 20.0f;
+    
 
 	//範囲を超えない処理
 	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
@@ -301,7 +382,7 @@ void Player::Update()
 
 
 
-		/**/
+		/*
 
 		// マウス座標を取得する
 		POINT mousePos;
@@ -341,20 +422,43 @@ void Player::Update()
 		worldTransform3DReticle_.translation_.y -= mouseMove.lY * 1.0f; // 移動量を調整するために0.1倍する
 
 		
+*/
+
+
+		// マウス座標を取得する
+		POINT mousePos;
+		GetCursorPos(&mousePos);
+		// クライアント座標に変換する
+		ScreenToClient(GetActiveWindow(), &mousePos); // ウィンドウ座
+		
+		float windowWidth = 1280.0f;
+		float windowHeight = 720.0f;
+		
+		float ndcX = (2.0f * mousePos.x / windowWidth) - 1.0f;
+		float ndcY = 1.0f - (2.0f * mousePos.y / windowHeight);
+
+		Vector3 posNear1 = {ndcX, ndcY, 0.0f};
+		Vector3 posFar1 = {ndcX, ndcY, 1.0f};
+
+		Matrix4x4 matVP = Multiply2(camera_->matView, camera_->matProjection);
+		Matrix4x4 invVP = Inverse2(matVP);
+
+		// スクリーン座標
+		Vector3 posNear = {(float)mousePos.x, (float)mousePos.y, 0.0f};
+		Vector3 posFar = {(float)mousePos.x, (float)mousePos.y, 1.0f};
+		// スクリーン座標系からワールド座標系に変換する
+		Vector3 worldPosNear = Transform(posNear, matVP);
+		Vector3 worldPosFar = Transform(posFar, matVP);
+		// マウスレイの方向
+		Vector3 rayDir = worldPosFar - worldPosNear;
+		rayDir = Normalize(rayDir);
+
+		float distance = 15.0f;
+		worldTransform3DReticle_.translation_ = worldPosNear + rayDir * distance;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+		
 	}
 
 
@@ -453,11 +557,6 @@ void Player::RotateZ()
 
 void Player::Attack() 
 {
-
-
-	
-
-
 	if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0))
 	{
 		//弾の速度
@@ -496,15 +595,52 @@ KamataEngine::Vector3 Player::GetWorldPosition()
 
 
 
-void Player::OnCollisionP()
+
+
+
+
+AABB2 Player::GetAABB2() 
 {
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB2 aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+
+// 衝突応答
+void Player::OnCollition2(const E_Bullet* enemyBullet)
+{
+	(void)enemyBullet;
 	hp_ -= 100;
-	if (hp_ <= 0) 
+	if (hp_ <= 0)
 	{
 		hp_ = 0;
 		isDead_ = true;
 	}
 }
+#pragma endregion
 
+#pragma region 衝突判定 [ プレイヤー  <<===>>  回復アイテム ]
+AABB3 Player::GetAABB3()
+{
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB3 aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+void Player::OnCollition3(const Recovery* recovery)
+{
+	(void)recovery;
+	hp_ += 100;
+	
+}
 
 #pragma endregion

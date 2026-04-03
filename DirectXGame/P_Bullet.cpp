@@ -56,9 +56,21 @@ KamataEngine::Vector3 P_Bullet::GetWorldPosition()
 	return worldPos;
 }
 
-void P_Bullet::OnCollision() 
-{ 
-	
+AABB P_Bullet::GetAABB()
+{
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
 }
 
+// 弾と敵の衝突応答
+void P_Bullet::OnCollition(const Enemy* enemy) { (void)enemy; }
+
+
 #pragma endregion
+

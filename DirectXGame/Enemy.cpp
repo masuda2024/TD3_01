@@ -163,8 +163,23 @@ KamataEngine::Vector3 Enemy::GetWorldPosition()
 	return worldPos;
 }
 
-void Enemy::OnCollisionE()
+#pragma endregion
+AABB Enemy::GetAABB()
 {
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+
+// 衝突応答
+void Enemy::OnCollition(const P_Bullet* playerBullet)
+{
+	(void)playerBullet;
 	E_hp_ -= 100;
 	if (E_hp_ <= 0)
 	{
@@ -172,5 +187,3 @@ void Enemy::OnCollisionE()
 		isEnemyDead_ = true;
 	}
 }
-
-#pragma endregion

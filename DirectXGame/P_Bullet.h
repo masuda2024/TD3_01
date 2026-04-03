@@ -1,5 +1,9 @@
 #pragma once
 #include"KamataEngine.h"
+#include "MyMath.h"
+
+class Enemy;
+
 class P_Bullet
 {
 public:
@@ -21,11 +25,18 @@ public:
 	// ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();
 
-	void OnCollision();
-
+	
+	// AABBを取得
+	AABB GetAABB();
+	// 衝突応答
+	void OnCollition(const Enemy* enemy);
 
 #pragma endregion
-	
+
+
+
+
+
 
 	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
 

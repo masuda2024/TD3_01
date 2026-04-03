@@ -18,7 +18,7 @@
 #include "P_Bullet.h"
 #include "E_Bullet.h"
 
-
+#include "Recovery.h"
 
 
 class Game 
@@ -121,6 +121,21 @@ private:
 	Enemy* enemy_ = nullptr;
 	KamataEngine::Model* modelEnemy_ = nullptr;
 #pragma endregion
+
+#pragma region 回復アイテム
+
+	Recovery* recovery_ = nullptr;
+	KamataEngine::Model* modelRecovery_ = nullptr;
+
+#pragma endregion
+
+	// プレイヤーの弾の生成
+	P_Bullet* playerBullet_ = nullptr;
+	
+	
+	// 敵の弾の生成
+	E_Bullet* E_Bullet_ = nullptr;
+
 
 
 

@@ -34,6 +34,19 @@ void Game::Initialize()
 #pragma endregion
 
 
+
+#pragma region 回復アイテム
+
+	modelRecovery_ = KamataEngine::Model::CreateFromOBJ("kaifuku", true);
+	recovery_ = new Recovery();
+	KamataEngine::Vector3 recoveryPosition = {0, 10.0f, 0};
+	recovery_->Initialize(modelRecovery_, &camera_, recoveryPosition);
+
+#pragma endregion
+
+
+
+
 #pragma region プレイヤー
 
 
@@ -50,9 +63,7 @@ void Game::Initialize()
 	
 #pragma endregion
 
-
-
-
+	
 
 
 #pragma region 敵
@@ -60,7 +71,7 @@ void Game::Initialize()
 	//敵の生成
 	enemy_ = new Enemy();
 	//敵の初期化
-	KamataEngine::Vector3 enemyPosition = {40, 0, 0};
+	KamataEngine::Vector3 enemyPosition = {40, 10, 0};
 	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
 #pragma endregion	
 
@@ -167,6 +178,12 @@ void Game::Update()
 
 
 
+
+#pragma region 回復アイテム
+
+	recovery_->Update();
+
+#pragma endregion
 
 
 #pragma region プレイヤー
@@ -299,6 +316,12 @@ void Game::Draw()
 
 #pragma endregion
 
+#pragma region 回復アイテム
+
+	recovery_->Draw();
+
+#pragma endregion
+
 #pragma region プレイヤー
 	player_->Draw();
 #pragma endregion
@@ -337,7 +360,7 @@ Game::~Game()
 	delete modelEarth_; 
 	delete modelMoon_;
 
-
+	delete recovery_;
 
 	//プレイヤーの解放
 	delete player_;
@@ -353,72 +376,75 @@ Game::~Game()
 
 void Game::CheckAllCollisions()
 {
-   
-	Vector3 posP = player_->GetWorldPosition();
-	const std::list<P_Bullet*>& playerBullets = player_->GetBullets();
 	
-	Vector3 posE = enemy_->GetWorldPosition();
+	
+	const std::list<P_Bullet*>& playerBullets = player_->GetBullets();
 	const std::list<E_Bullet*>& enemyBullets = enemy_->GetE_Bullets();
    
+
+#pragma region [ プレイヤーの弾  <<===>>  敵 ]
 	
+
+	AABB aabb1, aabb2;
+	for (P_Bullet* p_bullet : playerBullets)
+	{
+
+		aabb1 = p_bullet->GetAABB();
+		aabb2 = enemy_->GetAABB();
+		if (IsCollition(aabb1, aabb2)) 
+		{
+			p_bullet->OnCollition(enemy_);
+			enemy_->OnCollition(p_bullet);
+		}
+	}
+
+#pragma endregion
+	
+	
+
+
+
+	
+
+
+
+
 
 #pragma region [ プレイヤー  <<===>>  敵の弾 ]
 	
 	
+
+	AABB2 aabb3, aabb4;
 	for (E_Bullet* e_bullet : enemyBullets)
 	{
-		Vector3 posEB = e_bullet->GetWorldPosition();
-
-		float radiusP = player_->kWidth * 0.5f;
-		float radiusEB = e_bullet->kWidth * 0.5f;
-
-		Vector3 diff = posP - posEB;
-
-		float distSq = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
-
-		float radiusSum = radiusP + radiusEB;
-
-		if (distSq <= radiusSum * radiusSum)
+		
+		aabb3 = e_bullet->GetAABB2();
+		aabb4 = player_->GetAABB2();
+		if (IsCollition2(aabb3, aabb4))
 		{
-			ImGui::Text("HIT\n");
-			player_->OnCollisionP();
-			e_bullet->OnCollision();
+			e_bullet->OnCollition2(player_);
+			player_->OnCollition2(e_bullet);
 		}
 	}
 
-
 #pragma endregion
 
+	#pragma region[ プレイヤー  <<===>>  回復アイテム ]
 
-
-#pragma region [ プレイヤーの弾  <<===>>  敵 ]
-
-	for (P_Bullet* p_bullet : playerBullets)
+	AABB3 aabb5, aabb6;
+	aabb5 = recovery_->GetAABB3();
+	aabb6 = player_->GetAABB3();
+	if (IsCollition3(aabb5, aabb6))
 	{
-		Vector3 posPB = p_bullet->GetWorldPosition();
-
-		float radiusE = enemy_->kWidth * 0.5f;
-		float radiusPB = p_bullet->kWidth * 0.5f;
-
-		Vector3 diff2 = posE - posPB;
-
-		float distSq2 = diff2.x * diff2.x + diff2.y * diff2.y + diff2.z * diff2.z;
-
-		float radiusSum2 = radiusE + radiusPB;
-
-		if (distSq2 <= radiusSum2 * radiusSum2) 
-		{
-			enemy_->OnCollisionE();
-			p_bullet->OnCollision();
-		}
+		recovery_->OnCollition3(player_);
+		player_->OnCollition3(recovery_);
 	}
 
 
 
 
 
-
-#pragma endregion
+	#pragma endregion
 
 
 }
