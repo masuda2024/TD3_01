@@ -50,6 +50,7 @@ public:
 
 
 	void Attack();
+	void AttackMouse();
 #pragma region プレイヤーの状態
 	
 	
@@ -123,6 +124,7 @@ private:
 	// 3Dレティクル用ワールド変換
 	WorldTransform worldTransform3DReticle_;
 
+	
 	// カメラ
 	KamataEngine::Camera* camera_;
 	

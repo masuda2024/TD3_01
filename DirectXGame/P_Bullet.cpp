@@ -1,15 +1,18 @@
 #include "P_Bullet.h"
 using namespace KamataEngine;
+using namespace MathUtility;
 #include "MyMath.h"
 
 
 
 
-void P_Bullet::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity) 
+void P_Bullet::Initialize(KamataEngine::Model* model,  const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity) 
 { 
 	assert(model);
 
 	model_ = model;
+
+
 
 	model_P_Bullet_ = model;
 
@@ -27,9 +30,29 @@ void P_Bullet::Update()
 	//弾の速度(X軸方向)
 	PB_velocity_.x = 1.0f;
 
-	//座標を移動させる (1フレーム分の移動量を足し込む)
-	worldTransform_.translation_.x += PB_velocity_.x;
 	
+	// 座標を移動させる (1フレーム分の移動量を足し込む)
+	worldTransform_.translation_.x += PB_velocity_.x;
+
+	if (Input::GetInstance()->TriggerKey(DIK_M)) 
+	{
+		ON_Mouse = !ON_Mouse;  // 押すたびに反転
+		OFF_Mouse = !ON_Mouse; // 逆状態にする
+	}
+
+	if (OFF_Mouse)
+	{
+		
+	
+	}
+
+	if (ON_Mouse)
+	{
+
+		
+	}
+
+
 
 
 	// アフィン変換行列

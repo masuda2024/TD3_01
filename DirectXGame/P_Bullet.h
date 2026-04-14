@@ -7,9 +7,11 @@ class Enemy;
 class P_Bullet
 {
 public:
-	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
+	void Initialize(KamataEngine::Model* model,  const KamataEngine::Vector3& position, const KamataEngine::Vector3& velocity);
 	void Update();
 	void Draw(const KamataEngine::Camera& camera);
+
+	
 
 	KamataEngine::Model* model_P_Bullet_ = nullptr;
 	
@@ -44,6 +46,9 @@ public:
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
+	
+	
+
 	// モデル
 	KamataEngine::Model* model_ = nullptr;
 
@@ -54,4 +59,9 @@ private:
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+
+
+	// マウスの切り替え
+	uint32_t OFF_Mouse = true;
+	uint32_t ON_Mouse = false;
 };

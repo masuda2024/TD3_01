@@ -243,6 +243,9 @@ void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& pos
 
 
 
+	
+
+
 	//シングルトンインスタンスを取得する
 	input_ = KamataEngine::Input::GetInstance();
 	
@@ -295,9 +298,8 @@ void Player::Update()
 
 
 #pragma region プレイヤーの攻撃
-	Attack();
+	;
 	
-
 	for (P_Bullet* p_bullet : p_bullets_)
 	{
 		p_bullet->Update();
@@ -307,13 +309,7 @@ void Player::Update()
 #pragma endregion
 
 
-#pragma region 3Dレティクル
-
-	
-	
-	
-
-
+#pragma region 3Dレティクルのモード切替
 
 
 	ImGui::Text("Mouse Control: %s", ON_Mouse ? "ON" : "OFF");
@@ -326,7 +322,8 @@ void Player::Update()
 
 	if (OFF_Mouse)
 	{
-
+		Attack();
+		#pragma region カーソルの位置
 		// プレイヤーから3Dレティクルへの距離
 		const float kDistanceP_To_3DR = 50.0f;
 		// プレイヤーから3Dレティクルへのオフセット(X+1向き)
@@ -339,135 +336,58 @@ void Player::Update()
 		worldTransform3DReticle_.translation_ = worldTransform_.translation_ + offset;
 	
 		worldTransform3DReticle_.translation_ += move;
+		#pragma endregion
 	}
 
 	if (ON_Mouse)
 	{
-		/*
-		// マウスの移動量を取得する
-		Input::MouseMove mouseMove = input_->GetMouseMove();
-		
+		AttackMouse();
+		#pragma region カーソルをマウス座標に合わせる
+
 
 		POINT mousePos;
 		GetCursorPos(&mousePos);
-		ScreenToClient(GetActiveWindow(), &mousePos);
 
-		float windowWidth = 1208.0f;
-		float windowHeight = 720.0f;
+		HWND hwnd = KamataEngine::WinApp::GetInstance()->GetHwnd();
+		ScreenToClient(hwnd, &mousePos);
 
-		float ndcX = (2.0f * mousePos.x) / windowWidth - 1.0f;
-		float ndcY = 1.0f - (2.0f * mousePos.y) / windowHeight; // Y軸反転
+		// 画面サイズ
+		float screenWidth = 1280.0f;
+		float screenHeight = 720.0f;
 
-		Vector3 posNear = {ndcX, ndcY, 0.0f}; // 近面
-		Vector3 posFar = {ndcX, ndcY, 1.0f};  // 遠面
-		Matrix4x4 matVP = Multiply2(camera_->matView, camera_->matProjection);
-		Matrix4x4 matVPInv = Inverse2(matVP);
+		// NDC変換（-1～1）
+		float ndcX = (mousePos.x / screenWidth) * 2.0f - 1.0f;
+		float ndcY = 1.0f - (mousePos.y / screenHeight) * 2.0f;
 
-		Vector3 worldPosNear = Transform(posNear, matVPInv);
-		Vector3 worldPosFar = Transform(posFar, matVPInv);
+		// カメラ空間
+		float tanFov = tanf(camera_->fovAngleY * 0.5f);
 
-		Vector3 rayDir = worldPosFar - worldPosNear;
+		Vector3 rayDirCamera;
+		rayDirCamera.x = ndcX * camera_->aspectRatio * tanFov;
+		rayDirCamera.y = ndcY * tanFov;
+		rayDirCamera.z = 1.0f; // ←重要
+
+		rayDirCamera = Normalize(rayDirCamera);
+
+		// カメラ回転
+		Matrix4x4 rotMat = MakeRotateMatrix(camera_->rotation_);
+
+		// ワールド方向
+		Vector3 rayDir = TransformNormal(rayDirCamera, rotMat);
 		rayDir = Normalize(rayDir);
 
-		const float kDistanceC_To_3DR = 50.0f;
-		worldTransform3DReticle_.translation_ = worldPosNear + rayDir * kDistanceC_To_3DR;
+		// カメラ位置
+		Vector3 camPos = camera_->translation_;
 
-		float deltaX = mouseMove.lX / windowWidth * 2.0f;   // NDC
-		float deltaY = -mouseMove.lY / windowHeight * 2.0f; // NDC反転
+		// レティクル位置
+		const float kDistance = 15.0f;
+		worldTransform3DReticle_.translation_ = camPos + rayDir * kDistance;
 
-		Vector3 offset = Transform(Vector3{deltaX, deltaY, 0.0f}, matVPInv) - Transform(Vector3{0, 0, 0}, matVPInv);
-		worldTransform3DReticle_.translation_ += offset;
-		*/
+		// 行列更新
+		worldTransform3DReticle_.TransferMatrix();
 
-
-
-
-		/*
-
-		// マウス座標を取得する
-		POINT mousePos;
-		GetCursorPos(&mousePos);
-		// クライアント座標に変換する
-		ScreenToClient(GetActiveWindow(), &mousePos); // ウィンドウ座
-		
-		
-		
-		
-		// マウス座標を3Dレティクルの位置に代入する
-		mousePos.x = static_cast<LONG>(worldTransform3DReticle_.translation_.x);
-		mousePos.y = static_cast<LONG>(worldTransform3DReticle_.translation_.y);
-		//　ビュープロジェクションビューポート合成行列
-		Matrix4x4 matVP = Multiply2(camera_->matView, camera_->matProjection);
-		// 合成行列の逆行列を計算する
-		Matrix4x4 matVPInv = Inverse2(matVP);
-		//スクリーン座標
-		Vector3 posNear = {(float)mousePos.x, (float)mousePos.y, 0.0f};
-		Vector3 posFar = {(float)mousePos.x, (float)mousePos.y, 1.0f};
-		//スクリーン座標系からワールド座標系に変換する
-		Vector3 worldPosNear = Transform(posNear, matVPInv);
-		Vector3 worldPosFar = Transform(posFar, matVPInv);
-		//マウスレイの方向
-		Vector3 rayDir = worldPosFar - worldPosNear;
-		rayDir = Normalize(rayDir);
-		// カメラから3Dレティクルへの距離
-		const float kDistanceC_To_3DR = 15.0f;
-		worldTransform3DReticle_.translation_ = posNear + rayDir * kDistanceC_To_3DR;
-
-		
-		//マウスの移動量を取得する
-		Input::MouseMove mouseMove = input_->GetMouseMove();
-		
-		//マウスの移動量を3Dレティクルの位置に加算する
-		worldTransform3DReticle_.translation_.x += mouseMove.lX * 1.0f; // 移動量を調整するために0.1倍する
-		worldTransform3DReticle_.translation_.y -= mouseMove.lY * 1.0f; // 移動量を調整するために0.1倍する
-
-		
-*/
-
-
-		// マウス座標を取得する
-		POINT mousePos;
-		GetCursorPos(&mousePos);
-		// クライアント座標に変換する
-		ScreenToClient(GetActiveWindow(), &mousePos); // ウィンドウ座
-		
-		float windowWidth = 1280.0f;
-		float windowHeight = 720.0f;
-		
-		float ndcX = (2.0f * mousePos.x / windowWidth) - 1.0f;
-		float ndcY = 1.0f - (2.0f * mousePos.y / windowHeight);
-
-		Vector3 posNear1 = {ndcX, ndcY, 0.0f};
-		Vector3 posFar1 = {ndcX, ndcY, 1.0f};
-
-		Matrix4x4 matVP = Multiply2(camera_->matView, camera_->matProjection);
-		Matrix4x4 invVP = Inverse2(matVP);
-
-		// スクリーン座標
-		Vector3 posNear = {(float)mousePos.x, (float)mousePos.y, 0.0f};
-		Vector3 posFar = {(float)mousePos.x, (float)mousePos.y, 1.0f};
-		// スクリーン座標系からワールド座標系に変換する
-		Vector3 worldPosNear = Transform(posNear, matVP);
-		Vector3 worldPosFar = Transform(posFar, matVP);
-		// マウスレイの方向
-		Vector3 rayDir = worldPosFar - worldPosNear;
-		rayDir = Normalize(rayDir);
-
-		float distance = 15.0f;
-		worldTransform3DReticle_.translation_ = worldPosNear + rayDir * distance;
-
-
-
-		
+		#pragma endregion
 	}
-
-
-
-
-
-
-
-	
 
 #pragma endregion
 
@@ -481,6 +401,8 @@ void Player::Update()
 	// 行列更新
 	worldTransform3DReticle_.matWorld_ = MakeAffineMatrix(worldTransform3DReticle_.scale_, worldTransform3DReticle_.rotation_, worldTransform3DReticle_.translation_);
 	worldTransform3DReticle_.TransferMatrix();
+
+
 
 	
 	// アフィン変換行列
@@ -559,6 +481,7 @@ void Player::Attack()
 {
 	if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0))
 	{
+		
 		//弾の速度
 		const float kBulletSpeed = 1.0f;
 		KamataEngine::Vector3 velocity(0, 0, kBulletSpeed);
@@ -573,12 +496,41 @@ void Player::Attack()
 
 		velocity_ = worldTransform3DReticle_.translation_ - worldTransform_.translation_;
 		velocity_ = Normalize(velocity_) * kBulletSpeed;
-
+		
 	}
+}
+
+void Player::AttackMouse()
+{
+	if (input_->TriggerKey(DIK_SPACE) || input_->IsTriggerMouse(0))
+	{
+		// 弾の速度
+		const float kBulletSpeed = 1.0f;
+
+		// ★ レティクル方向を計算
+		KamataEngine::Vector3 direction = worldTransform3DReticle_.translation_ - worldTransform_.translation_;
+
+		direction = Normalize(direction);
+
+		// ★ velocity作成
+		KamataEngine::Vector3 velocity = direction * kBulletSpeed;
+
+		// ★ 発射位置（少し前に出すと自然）
+		const float kSpawnOffset = 1.5f;
+		KamataEngine::Vector3 spawnPos = worldTransform_.translation_ + direction * kSpawnOffset;
+
+		// ★ 弾生成
+		P_Bullet* new_p_Bullet = new P_Bullet();
+		new_p_Bullet->Initialize(model_, spawnPos, velocity);
+
+		p_bullets_.push_back(new_p_Bullet);
+	}
+	
 }
 
 #pragma endregion 
 
+		
 #pragma region 衝突判定 [ プレイヤー  <<===>>  敵の弾 ]
 
 KamataEngine::Vector3 Player::GetWorldPosition() 
